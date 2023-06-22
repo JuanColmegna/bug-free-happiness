@@ -1,4 +1,6 @@
-import { Application, Assets, Container, Point, Sprite } from 'pixi.js'
+import { Application, Assets} from 'pixi.js'
+import {assets} from "./assets"
+import { Scene } from './Scene';
 
 const app = new Application({
 	view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
@@ -8,6 +10,8 @@ const app = new Application({
 	width: 1280,
 	height: 720
 });
+
+(globalThis as any).__PIXI_APP__ = app;
 
 // Resized canvas
 
@@ -33,31 +37,11 @@ window.dispatchEvent(new Event('resize'));
 
 // Carga de assets
 
-Assets.add("myDino", "./dino.png");
-Assets.add("Hat", "./dinoHat.png");
+Assets.addBundle("myAssets", assets);
 
 // Lectura de assets
 
-Assets.load(["myDino", "Hat"]).then(()=>{
-	
-	const myDino: Sprite = Sprite.from("myDino");
-
-	const hat: Sprite = Sprite.from("Hat");
-	hat.position.set(120,-165);
-
-	const dinoWithHat: Container = new Container();
-	dinoWithHat.addChild(myDino);
-	dinoWithHat.addChild(hat);
-	
-	dinoWithHat.scale.set(0.5);
-	dinoWithHat.position.set(100,100);
-	
-	console.log(hat.toGlobal(new Point()));
-	console.log(hat.parent.toGlobal(hat.position));
-
-	const aux = hat.parent.toLocal(new Point(640,360));
-	dinoWithHat.position.x = aux.x;
-	dinoWithHat.position.x = aux.y;
-
-	app.stage.addChild(dinoWithHat);
+Assets.loadBundle(["myAssets"]).then(()=>{
+	const myScene = new Scene();
+	app.stage.addChild(myScene)
 });
